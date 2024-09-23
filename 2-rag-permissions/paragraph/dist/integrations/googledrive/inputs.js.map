@@ -1,0 +1,1 @@
+{"version":3,"file":"inputs.js","sourceRoot":"","sources":["../../../src/integrations/googledrive/inputs.ts"],"names":[],"mappings":";;AAAA,sEAAoE;AAKpE,MAAM,iBAAiB,GAAG,IAAA,0BAAY,EAAC;IACrC,eAAe,EAAE;QACf,EAAE,EAAE,oBAAoB;QACxB,KAAK,EAAE,iBAAiB;QACxB,QAAQ,EAAE,KAAK;QACf,IAAI,EAAE,QAAQ;KACf;CACF,CAAC,CAAC;AAEH,kBAAe,iBAAiB,CAAC"}
