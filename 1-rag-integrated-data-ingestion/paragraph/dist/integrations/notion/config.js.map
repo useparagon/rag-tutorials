@@ -1,0 +1,1 @@
+{"version":3,"file":"config.js","sourceRoot":"","sources":["../../../src/integrations/notion/config.ts"],"names":[],"mappings":";;;AAEA,wIAAuH;AAKvH,MAAM,MAAM,GAAuB;IACjC,WAAW,EAAE,+BAA+B;IAC5C,YAAY,EAAE;;;;;0DAK0C;IACxD,aAAa,EAAE,KAAK;IACpB,oBAAoB,EAAE;QACpB,gDAAsC;KACvC;CACF,CAAC;AAEF,kBAAe,MAAM,CAAC"}

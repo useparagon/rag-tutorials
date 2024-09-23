@@ -1,0 +1,1 @@
+{"version":3,"file":"config.js","sourceRoot":"","sources":["../../../src/integrations/googledrive/config.ts"],"names":[],"mappings":";;;AAEA,kHAAiG;AACjG,gHAA+F;AAC/F,0GAAyF;AAKzF,MAAM,MAAM,GAAuB;IACjC,WAAW,EAAE,4BAA4B;IACzC,YAAY,EAAE;;;;;oCAKoB;IAClC,aAAa,EAAE,KAAK;IACpB,oBAAoB,EAAE;QACpB,qCAA2B;QAC3B,oCAA0B;QAC1B,iCAAuB;KACxB;CACF,CAAC;AAEF,kBAAe,MAAM,CAAC"}

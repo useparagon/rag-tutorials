@@ -1,0 +1,2676 @@
+{
+  "secrets": [],
+  "events": {},
+  "integrations": {
+    "slack": {
+      "id": "c7b730b5-6ba3-4b9b-b87e-c6a204340d35",
+      "name": "slack",
+      "workflows": {
+        "9fda5b17-67d6-4d59-bd73-d3e51809a45a": {
+          "id": "9fda5b17-67d6-4d59-bd73-d3e51809a45a",
+          "name": "Paragon Tutorial - New Message Sync",
+          "steps": [
+            {
+              "id": "b8ef2a88-b95e-460a-9e1d-829456ede3b8",
+              "type": "TRIGGER/ACTION",
+              "parameters": {
+                "intent": "SLACK_TRIGGER_CHANNEL_MESSAGE_POSTED",
+                "actionType": "slack",
+                "credentials": [],
+                "actionParameters": []
+              },
+              "next": "3131da5c-714c-4ba2-9a97-9db412ea53bc",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "3131da5c-714c-4ba2-9a97-9db412ea53bc",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "message",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "b8ef2a88-b95e-460a-9e1d-829456ede3b8",
+                      "path": [
+                        "result"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function yourFunction(params, libraries) {\n                const message = params.message;\n                if (params.error) {\n                    return;\n                }\n                else if (message.type === 'message' && !message.subtype) {\n                    return { text: message.text, channel: message.channel };\n                }\n                else {\n                    return;\n                }\n            }",
+                "retryOnFailure": false
+              },
+              "next": "26f5de1f-c922-4cc4-8c58-3687cf4550df",
+              "_migrations": {
+                "name": "parseMessageStep"
+              },
+              "description": "Parse Message"
+            },
+            {
+              "id": "26f5de1f-c922-4cc4-8c58-3687cf4550df",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$exists",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "3131da5c-714c-4ba2-9a97-9db412ea53bc",
+                                  "path": [
+                                    "result"
+                                  ],
+                                  "dataType": "ANY"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "bc0f449b-210a-4b8e-8020-ac5c86a796a6"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep"
+              },
+              "description": "Message isn't empty?"
+            },
+            {
+              "id": "bc0f449b-210a-4b8e-8020-ac5c86a796a6",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/slack-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "3131da5c-714c-4ba2-9a97-9db412ea53bc",
+                          "path": [
+                            "result",
+                            "text"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "channel",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "3131da5c-714c-4ba2-9a97-9db412ea53bc",
+                          "path": [
+                            "result",
+                            "channel"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send to Backend"
+            }
+          ],
+          "isDraft": false
+        },
+        "2af13f19-af7a-43d4-8610-0791ee442db2": {
+          "id": "2af13f19-af7a-43d4-8610-0791ee442db2",
+          "name": "Paragon Tutorial - Initial Channel Sync",
+          "steps": [
+            {
+              "id": "7f09c257-fec4-4ba4-946b-a77418ed606d",
+              "type": "TRIGGER/INTEGRATION_ENABLED",
+              "parameters": {},
+              "next": "677b9526-602c-4cb5-929f-7444017b82b8",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "677b9526-602c-4cb5-929f-7444017b82b8",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "slack",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "/conversations.list",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "cd526331-3c9a-4ddd-8774-a8b096647223",
+              "_migrations": {
+                "name": "integrationRequestStep"
+              },
+              "description": "Get All Channels"
+            },
+            {
+              "id": "cd526331-3c9a-4ddd-8774-a8b096647223",
+              "type": "TRANSITION/MAP",
+              "parameters": {
+                "iterator": {
+                  "type": "VARIABLE",
+                  "stepId": "677b9526-602c-4cb5-929f-7444017b82b8",
+                  "path": [
+                    "response",
+                    "body",
+                    "channels"
+                  ],
+                  "dataType": "ARRAY"
+                },
+                "nextToIterate": "54b762ee-1d27-4412-98af-6ad4c61ab813"
+              },
+              "next": null,
+              "_migrations": {
+                "name": "mapStep"
+              },
+              "description": "For each channel"
+            },
+            {
+              "id": "54b762ee-1d27-4412-98af-6ad4c61ab813",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "slack",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/conversations.history?channel="
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "cd526331-3c9a-4ddd-8774-a8b096647223",
+                      "path": [
+                        "instance",
+                        "id"
+                      ]
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "channel",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "cd526331-3c9a-4ddd-8774-a8b096647223",
+                          "path": [
+                            "instance",
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "22dba890-21e3-4b19-87ff-8eccb5551953",
+              "_migrations": {
+                "name": "integrationRequestStep1"
+              },
+              "description": "Get Conversation History"
+            },
+            {
+              "id": "22dba890-21e3-4b19-87ff-8eccb5551953",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "messages",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "54b762ee-1d27-4412-98af-6ad4c61ab813",
+                      "path": [
+                        "response",
+                        "body",
+                        "messages"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  },
+                  {
+                    "key": "error",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "54b762ee-1d27-4412-98af-6ad4c61ab813",
+                      "path": [
+                        "response",
+                        "body",
+                        "error"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  },
+                  {
+                    "key": "channel",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "cd526331-3c9a-4ddd-8774-a8b096647223",
+                      "path": [
+                        "instance",
+                        "name"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function yourFunction(params, libraries) {\n                const messages = params.messages;\n                if (!Array.isArray(messages) || params.error) {\n                    return;\n                }\n                const parsedMessages = [];\n                messages.forEach((message) => {\n                    if (message.type === 'message' && !message.subtype) {\n                        parsedMessages.push({\n                            text: message.text,\n                            channel: params.channel,\n                        });\n                    }\n                });\n                return parsedMessages;\n            }",
+                "retryOnFailure": false
+              },
+              "next": "4b9176c2-0c19-4f7f-b6c4-47fb0e383ab3",
+              "_migrations": {
+                "name": "functionStep"
+              },
+              "description": "Parse Message JSON"
+            },
+            {
+              "id": "4b9176c2-0c19-4f7f-b6c4-47fb0e383ab3",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$exists",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "22dba890-21e3-4b19-87ff-8eccb5551953",
+                                  "path": [
+                                    "result"
+                                  ],
+                                  "dataType": "ANY"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "9ff54731-8083-48ba-b669-c7b4a68a7b23"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "checkArrayStep"
+              },
+              "description": "Check Array"
+            },
+            {
+              "id": "9ff54731-8083-48ba-b669-c7b4a68a7b23",
+              "type": "TRANSITION/MAP",
+              "parameters": {
+                "iterator": {
+                  "type": "VARIABLE",
+                  "stepId": "22dba890-21e3-4b19-87ff-8eccb5551953",
+                  "path": [
+                    "result"
+                  ],
+                  "dataType": "ARRAY"
+                },
+                "nextToIterate": "0a9c115c-f950-45e0-ad4d-69b45e76a40b"
+              },
+              "next": null,
+              "_migrations": {
+                "name": "mapStep1"
+              },
+              "description": "For each message"
+            },
+            {
+              "id": "0a9c115c-f950-45e0-ad4d-69b45e76a40b",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/slack-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "9ff54731-8083-48ba-b669-c7b4a68a7b23",
+                          "path": [
+                            "instance",
+                            "text"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "channel",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "9ff54731-8083-48ba-b669-c7b4a68a7b23",
+                          "path": [
+                            "instance",
+                            "channel"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send to Backend"
+            }
+          ],
+          "isDraft": false
+        }
+      },
+      "config": {
+        "id": "3e7bfe97-5228-4894-8e1c-167002f6793a",
+        "values": {
+          "paragonLink": true,
+          "description": "Send notifications to Slack",
+          "overview": "Connect your Slack workspace to receive notifications and alerts in Slack. Stay connected to important activity by bringing it all together in your Slack workspace.\n       \n\nOur Slack integration enables you to:\n   \n\n• Receive alerts and notifications in your Slack workspace\n• Notify or DM specific team members based on certain activity",
+          "workflowMeta": {
+            "9fda5b17-67d6-4d59-bd73-d3e51809a45a": {
+              "id": "9fda5b17-67d6-4d59-bd73-d3e51809a45a",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Allow RAG application to parse through messages in the Q&A channel",
+              "order": 1
+            },
+            "2af13f19-af7a-43d4-8610-0791ee442db2": {
+              "id": "2af13f19-af7a-43d4-8610-0791ee442db2",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Add a user-facing description of this workflow",
+              "order": 0
+            }
+          },
+          "sharedMeta": {
+            "inputs": []
+          }
+        }
+      }
+    },
+    "notion": {
+      "id": "ec1ba774-8f29-4d1c-b1c6-42a040a550a9",
+      "name": "notion",
+      "workflows": {
+        "9dacef6a-082f-4583-8baf-33e42f24a0d4": {
+          "id": "9dacef6a-082f-4583-8baf-33e42f24a0d4",
+          "name": "Paragon Tutorial - Send Notion Contents to API",
+          "steps": [
+            {
+              "id": "a3c41e82-2dc3-440f-889b-42dcfae2bcbc",
+              "type": "TRIGGER/ACTION",
+              "parameters": {
+                "intent": "NOTION_TRIGGER_PAGE_UPDATED",
+                "actionType": "notion",
+                "credentials": [],
+                "actionParameters": []
+              },
+              "next": "43dbd762-dfba-49e1-9e0b-a054471a54d4",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "43dbd762-dfba-49e1-9e0b-a054471a54d4",
+              "type": "ACTION/CUSTOM",
+              "parameters": {
+                "intent": "NOTION_GET_PAGE_CONTENT",
+                "actionType": "notion",
+                "credentials": [],
+                "actionParameters": [
+                  {
+                    "key": "blockId",
+                    "source": {
+                      "dataType": "ANY",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "ANY",
+                          "type": "VARIABLE",
+                          "stepId": "a3c41e82-2dc3-440f-889b-42dcfae2bcbc",
+                          "path": [
+                            "result",
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "ignoreFailure": false,
+                "retryOnFailure": false
+              },
+              "next": "c14592e5-3a55-4ee9-9851-dca6b06c1a3d",
+              "_migrations": {
+                "name": "actionStep"
+              },
+              "description": "Get Page Contents"
+            },
+            {
+              "id": "c14592e5-3a55-4ee9-9851-dca6b06c1a3d",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "blocks",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "43dbd762-dfba-49e1-9e0b-a054471a54d4",
+                      "path": [
+                        "result"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  },
+                  {
+                    "key": "url",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "a3c41e82-2dc3-440f-889b-42dcfae2bcbc",
+                      "path": [
+                        "result",
+                        "url"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function parseNotionPage(parameters) {\n                if (!Array.isArray(parameters.blocks)) {\n                    console.error('Invalid notion data provided. Expected an array.');\n                    return [];\n                }\n                const parsedContent = [];\n                parameters.blocks.forEach((block) => {\n                    const blockType = block.type;\n                    if (blockType === 'heading_3') {\n                        const headingContent = block.heading_3.rich_text[0].plain_text;\n                        parsedContent.push(`<h3>${headingContent}</h3>`);\n                    }\n                    else if (blockType === 'paragraph') {\n                        const paragraphContent = block.paragraph.rich_text\n                            .map((text) => text.plain_text)\n                            .join(' ');\n                        parsedContent.push(`<p>${paragraphContent}</p>`);\n                    }\n                    else if (blockType === 'child_page') {\n                        const childPageTitle = block.child_page.title;\n                        parsedContent.push(`<h2>${childPageTitle}</h2>`);\n                    }\n                });\n                return { text: parsedContent.join('\\n'), url: parameters.url };\n            }",
+                "retryOnFailure": false
+              },
+              "next": "022855dc-6e54-4ad0-a373-3b5e2f935006",
+              "_migrations": {
+                "name": "parseContentsStep"
+              },
+              "description": "Parse Contents"
+            },
+            {
+              "id": "022855dc-6e54-4ad0-a373-3b5e2f935006",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/notion-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "c14592e5-3a55-4ee9-9851-dca6b06c1a3d",
+                          "path": [
+                            "result",
+                            "text"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "url",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "c14592e5-3a55-4ee9-9851-dca6b06c1a3d",
+                          "path": [
+                            "result",
+                            "url"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send to Backend"
+            }
+          ],
+          "isDraft": false
+        }
+      },
+      "config": {
+        "id": "f2faf6d2-2e1e-4851-a03c-fdff9be9c2f6",
+        "values": {
+          "paragonLink": false,
+          "description": "Connect your Notion workspace",
+          "overview": "Connect to your Notion account to manage your pages and databases in Notion. Increase your team’s productivity by keeping your Notion account up to date - without manual data entry.\n              \nOur notion integration enables you to:\n           \n• Sync data in pages and databases in your Notion workspace\n• Create and update page content in your Notion workspace",
+          "workflowMeta": {
+            "9dacef6a-082f-4583-8baf-33e42f24a0d4": {
+              "id": "9dacef6a-082f-4583-8baf-33e42f24a0d4",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Add a user-facing description of this workflow",
+              "order": 0
+            }
+          },
+          "sharedMeta": {
+            "inputs": []
+          }
+        }
+      }
+    },
+    "googledrive": {
+      "id": "029ac807-8e98-4bf9-b1be-7084ad9d749e",
+      "name": "googledrive",
+      "workflows": {
+        "e9a7bbd5-b0a8-4ea3-9ba0-d56e62805a97": {
+          "id": "e9a7bbd5-b0a8-4ea3-9ba0-d56e62805a97",
+          "name": "RAG Tutorial - Sync New Files",
+          "steps": [
+            {
+              "id": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+              "type": "TRIGGER/ACTION",
+              "parameters": {
+                "intent": "GOOGLE_DRIVE_TRIGGER_FILE_CREATED",
+                "actionType": "googledrive",
+                "credentials": [],
+                "actionParameters": []
+              },
+              "next": "5f33f96a-48a6-485b-9858-68499c5d82b8",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "5f33f96a-48a6-485b-9858-68499c5d82b8",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.document",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.presentation",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.spreadsheet",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "7a926be2-581e-4aef-81db-3766da2fef3e"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "a4d36966-fea9-49fd-9879-70b8d3c1c417"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep"
+              },
+              "description": "Check if Google Workspace File"
+            },
+            {
+              "id": "7a926be2-581e-4aef-81db-3766da2fef3e",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.spreadsheet",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "80ce3c68-d61b-4f75-a9d4-fefb7e2f6a22"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "bea95972-5434-4854-8478-a09003e09e26"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep1"
+              },
+              "description": "Check if spreadsheet"
+            },
+            {
+              "id": "80ce3c68-d61b-4f75-a9d4-fefb7e2f6a22",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/csv"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/csv",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "46b7c0c9-19ef-4284-8b0c-645e0b638b45",
+              "_migrations": {
+                "name": "integrationRequestStep"
+              },
+              "description": "Get Google Sheets"
+            },
+            {
+              "id": "46b7c0c9-19ef-4284-8b0c-645e0b638b45",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "80ce3c68-d61b-4f75-a9d4-fefb7e2f6a22",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                          "path": [
+                            "result",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send contents to backend"
+            },
+            {
+              "id": "bea95972-5434-4854-8478-a09003e09e26",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/plain"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/plain",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "536c22e8-0c86-43a9-88ce-ac8ac8764e7c",
+              "_migrations": {
+                "name": "integrationRequestStep1"
+              },
+              "description": "Get Google Doc or Slides"
+            },
+            {
+              "id": "536c22e8-0c86-43a9-88ce-ac8ac8764e7c",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "bea95972-5434-4854-8478-a09003e09e26",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                          "path": [
+                            "result",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep1"
+              },
+              "description": "Send contents to backend"
+            },
+            {
+              "id": "a4d36966-fea9-49fd-9879-70b8d3c1c417",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "1b73ad6f-39d9-4f16-8d83-c825d6b6bdbd",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "?alt=media"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "alt",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "media",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "ddf75ed2-4c8a-4efb-8a8a-77875f9deeef",
+              "_migrations": {
+                "name": "integrationRequestStep2"
+              },
+              "description": "Get Non-Google Native File"
+            },
+            {
+              "id": "ddf75ed2-4c8a-4efb-8a8a-77875f9deeef",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "file",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "a4d36966-fea9-49fd-9879-70b8d3c1c417",
+                      "path": [
+                        "response",
+                        "body"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function yourFunction(param, libraries) {\n                var buffer = libraries.Buffer;\n                const fileData = param.file.data;\n                const fileType = param.file.mimeType;\n                return ('data:' + fileType + ';base64,' + buffer.from(fileData, 'hex').toString('base64'));\n            }",
+                "retryOnFailure": false
+              },
+              "next": "2139fbdb-567f-4f38-bbd5-d3b1cd95d1d8",
+              "_migrations": {
+                "name": "functionStep"
+              },
+              "description": "Convert to base64 format"
+            },
+            {
+              "id": "2139fbdb-567f-4f38-bbd5-d3b1cd95d1d8",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "base64",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "ddf75ed2-4c8a-4efb-8a8a-77875f9deeef",
+                          "path": [
+                            "result"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep2"
+              },
+              "description": "Send contents to upload file backend"
+            }
+          ],
+          "isDraft": false
+        },
+        "e0d3f3c4-dc2b-4631-8496-2fb006c4d626": {
+          "id": "e0d3f3c4-dc2b-4631-8496-2fb006c4d626",
+          "name": "RAG Tutorial - Sync File Updates",
+          "steps": [
+            {
+              "id": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+              "type": "TRIGGER/ACTION",
+              "parameters": {
+                "intent": "GOOGLE_DRIVE_TRIGGER_FILE_UPDATED",
+                "actionType": "googledrive",
+                "credentials": [],
+                "actionParameters": []
+              },
+              "next": "4a62f844-15d3-4518-bc5d-5bc49f879806",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "4a62f844-15d3-4518-bc5d-5bc49f879806",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.document",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.presentation",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.spreadsheet",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "d51a424d-9d58-4613-954a-bbe15407d958"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "ae13456f-8262-4b5d-b852-e8374ce08b1b"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep"
+              },
+              "description": "Check if Google Workspace File"
+            },
+            {
+              "id": "d51a424d-9d58-4613-954a-bbe15407d958",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                                  "path": [
+                                    "result",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.spreadsheet",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "c94d5fc7-a565-44f0-8a28-7e3b82bca170"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "e9276e30-2ec2-4e6c-90e5-4735072248b4"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep1"
+              },
+              "description": "Check if spreadsheet"
+            },
+            {
+              "id": "c94d5fc7-a565-44f0-8a28-7e3b82bca170",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/csv"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/csv",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "247f6109-e2d5-4bc7-b6e4-e576bd17c090",
+              "_migrations": {
+                "name": "integrationRequestStep"
+              },
+              "description": "Get Google Sheets"
+            },
+            {
+              "id": "247f6109-e2d5-4bc7-b6e4-e576bd17c090",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "c94d5fc7-a565-44f0-8a28-7e3b82bca170",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                          "path": [
+                            "result",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send contents to backend"
+            },
+            {
+              "id": "e9276e30-2ec2-4e6c-90e5-4735072248b4",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/plain"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/plain",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "4f7d5311-5858-4820-8123-aee5bbbaef84",
+              "_migrations": {
+                "name": "integrationRequestStep1"
+              },
+              "description": "Get Google Doc or Slides"
+            },
+            {
+              "id": "4f7d5311-5858-4820-8123-aee5bbbaef84",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "e9276e30-2ec2-4e6c-90e5-4735072248b4",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                          "path": [
+                            "result",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep1"
+              },
+              "description": "Send contents to backend"
+            },
+            {
+              "id": "ae13456f-8262-4b5d-b852-e8374ce08b1b",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "323057b4-3acc-451e-8791-9ab0ca3bdb23",
+                      "path": [
+                        "result",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "?alt=media"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "alt",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "media",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "4e56d5c5-d105-44f7-bbc6-29e2db4ac111",
+              "_migrations": {
+                "name": "integrationRequestStep2"
+              },
+              "description": "Get Non-Google Native File"
+            },
+            {
+              "id": "4e56d5c5-d105-44f7-bbc6-29e2db4ac111",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "file",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "ae13456f-8262-4b5d-b852-e8374ce08b1b",
+                      "path": [
+                        "response",
+                        "body"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function yourFunction(param, libraries) {\n                var buffer = libraries.Buffer;\n                const fileData = param.file.data;\n                const fileType = param.file.mimeType;\n                return ('data:' + fileType + ';base64,' + buffer.from(fileData, 'hex').toString('base64'));\n            }",
+                "retryOnFailure": false
+              },
+              "next": "30200812-8ab4-4569-8d01-bd5fe73048cb",
+              "_migrations": {
+                "name": "functionStep"
+              },
+              "description": "Convert to base64 format"
+            },
+            {
+              "id": "30200812-8ab4-4569-8d01-bd5fe73048cb",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "base64",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "4e56d5c5-d105-44f7-bbc6-29e2db4ac111",
+                          "path": [
+                            "result"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep2"
+              },
+              "description": "Send contents to upload file backend"
+            }
+          ],
+          "isDraft": false
+        },
+        "208e8df9-c2a1-4f56-9497-5d435e1c5e3f": {
+          "id": "208e8df9-c2a1-4f56-9497-5d435e1c5e3f",
+          "name": "RAG Tutorial - Sync current files",
+          "steps": [
+            {
+              "id": "c82eca32-bd30-4a6a-8f73-3473150415fb",
+              "type": "TRIGGER/INTEGRATION_ENABLED",
+              "parameters": {},
+              "next": "4cfb44d6-302c-441d-90a2-7b40a9a93c50",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "4cfb44d6-302c-441d-90a2-7b40a9a93c50",
+              "type": "ACTION/CUSTOM",
+              "parameters": {
+                "intent": "GOOGLE_DRIVE_LIST_FILES",
+                "actionType": "googledrive",
+                "credentials": [],
+                "actionParameters": [
+                  {
+                    "key": "includeFolders",
+                    "source": {
+                      "dataType": "ANY",
+                      "type": "VALUE",
+                      "value": false
+                    }
+                  },
+                  {
+                    "key": "parentId",
+                    "source": {
+                      "dataType": "ANY",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "type": "CONNECT_CREDENTIAL_FIELD",
+                          "fieldType": "SHARED_WORKFLOW_SETTING",
+                          "inputId": "1b5bdbd8-5241-4e15-a953-4e34b27077cf",
+                          "path": []
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "ignoreFailure": false,
+                "retryOnFailure": false
+              },
+              "next": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+              "_migrations": {
+                "name": "actionStep"
+              },
+              "description": "Get files in shared folder"
+            },
+            {
+              "id": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+              "type": "TRANSITION/MAP",
+              "parameters": {
+                "iterator": {
+                  "type": "VARIABLE",
+                  "stepId": "4cfb44d6-302c-441d-90a2-7b40a9a93c50",
+                  "path": [
+                    "result"
+                  ],
+                  "dataType": "ARRAY"
+                },
+                "nextToIterate": "12b61c0c-b3e2-4272-822a-5714e5e03ad1"
+              },
+              "next": null,
+              "_migrations": {
+                "name": "forEachFileStep"
+              },
+              "description": "For each file"
+            },
+            {
+              "id": "12b61c0c-b3e2-4272-822a-5714e5e03ad1",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                                  "path": [
+                                    "instance",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.document",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                                  "path": [
+                                    "instance",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.presentation",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringContains",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                                  "path": [
+                                    "instance",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "d0065d1c-eecf-408c-ac3a-8c06dc4fcbd1"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "53c19e5c-cbe3-432a-8faf-255ac960f94d"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep"
+              },
+              "description": "Check if Google Workspace File"
+            },
+            {
+              "id": "d0065d1c-eecf-408c-ac3a-8c06dc4fcbd1",
+              "type": "TRANSITION/IFELSE",
+              "parameters": {
+                "choices": [
+                  {
+                    "conditionWrapper": {
+                      "type": "JOIN",
+                      "join": "OR",
+                      "conditions": [
+                        {
+                          "join": "AND",
+                          "type": "JOIN",
+                          "conditions": [
+                            {
+                              "type": "OPERATOR",
+                              "condition": {
+                                "operator": "$stringExactlyMatches",
+                                "variable": {
+                                  "type": "VARIABLE",
+                                  "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                                  "path": [
+                                    "instance",
+                                    "mimeType"
+                                  ],
+                                  "dataType": "STRING"
+                                },
+                                "argument": {
+                                  "type": "VALUE",
+                                  "value": "application/vnd.google-apps.spreadsheet",
+                                  "dataType": "STRING"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "isDefault": false,
+                    "label": "Yes",
+                    "next": "294d61e7-6d1d-477c-b07e-999fc76a2798"
+                  },
+                  {
+                    "isDefault": true,
+                    "label": "No",
+                    "next": "e12bbd71-0d42-49c9-9d29-b80d6eaf63bc"
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "ifelseStep1"
+              },
+              "description": "Check if spreadsheet"
+            },
+            {
+              "id": "294d61e7-6d1d-477c-b07e-999fc76a2798",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                      "path": [
+                        "instance",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/csv"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/csv",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "4e4d06b4-ad1e-4c04-acb3-ab2799d5aeac",
+              "_migrations": {
+                "name": "integrationRequestStep"
+              },
+              "description": "Get text from google sheets"
+            },
+            {
+              "id": "4e4d06b4-ad1e-4c04-acb3-ab2799d5aeac",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "294d61e7-6d1d-477c-b07e-999fc76a2798",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "fileId",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "source",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "googledrive",
+                      "dataType": "STRING"
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep"
+              },
+              "description": "Send text to backend"
+            },
+            {
+              "id": "e12bbd71-0d42-49c9-9d29-b80d6eaf63bc",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                      "path": [
+                        "instance",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "/export?mimeType=text/plain"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "mimeType",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "text/plain",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "c8ce24e9-42e7-48a1-b821-b8d3908f5749",
+              "_migrations": {
+                "name": "integrationRequestStep1"
+              },
+              "description": "Get text from google doc or slides"
+            },
+            {
+              "id": "c8ce24e9-42e7-48a1-b821-b8d3908f5749",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/gdrive-upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "text",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "e12bbd71-0d42-49c9-9d29-b80d6eaf63bc",
+                          "path": [
+                            "response",
+                            "body"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "fileId",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "source",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep1"
+              },
+              "description": "Send text to backend"
+            },
+            {
+              "id": "53c19e5c-cbe3-432a-8faf-255ac960f94d",
+              "type": "ACTION/CUSTOM_INTEGRATION_REQUEST",
+              "parameters": {
+                "actionType": "googledrive",
+                "httpMethod": "GET",
+                "retryOnFailure": false,
+                "ignoreFailure": false,
+                "url": {
+                  "dataType": "STRING",
+                  "type": "TOKENIZED",
+                  "parts": [
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "files/"
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VARIABLE",
+                      "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                      "path": [
+                        "instance",
+                        "id"
+                      ]
+                    },
+                    {
+                      "dataType": "STRING",
+                      "type": "VALUE",
+                      "value": "?alt=media&supportsTeamDrives=true"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "alt",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "media",
+                      "dataType": "STRING"
+                    }
+                  },
+                  {
+                    "key": "supportsTeamDrives",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "true",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": []
+              },
+              "next": "2c73e989-7302-4a77-85af-551c4ebb0a11",
+              "_migrations": {
+                "name": "integrationRequestStep2"
+              },
+              "description": "Get from non Google doc"
+            },
+            {
+              "id": "2c73e989-7302-4a77-85af-551c4ebb0a11",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [
+                  {
+                    "key": "file",
+                    "source": {
+                      "type": "VARIABLE",
+                      "stepId": "53c19e5c-cbe3-432a-8faf-255ac960f94d",
+                      "path": [
+                        "response",
+                        "body"
+                      ],
+                      "dataType": "ANY"
+                    }
+                  }
+                ],
+                "code": "function yourFunction(param, libraries) {\n                var buffer = libraries.Buffer;\n                const fileData = param.file.data;\n                const fileType = param.file.mimeType;\n                return ('data:' + fileType + ';base64,' + buffer.from(fileData, 'hex').toString('base64'));\n            }",
+                "retryOnFailure": false
+              },
+              "next": "ff5128d0-25ff-40bc-823d-8d3d13ef726f",
+              "_migrations": {
+                "name": "functionStep"
+              },
+              "description": "Convert file data"
+            },
+            {
+              "id": "ff5128d0-25ff-40bc-823d-8d3d13ef726f",
+              "type": "ACTION/REQUEST",
+              "parameters": {
+                "bodyType": "json",
+                "httpMethod": "POST",
+                "ignoreFailure": false,
+                "retryOnFailure": false,
+                "url": {
+                  "type": "TOKENIZED",
+                  "dataType": "STRING",
+                  "parts": [
+                    {
+                      "type": "VALUE",
+                      "value": "https://immensely-informed-dassie.ngrok-free.app/api/chat/upload",
+                      "dataType": "STRING"
+                    }
+                  ]
+                },
+                "params": [
+                  {
+                    "key": "",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "",
+                      "dataType": "STRING"
+                    }
+                  }
+                ],
+                "headers": [],
+                "body": [
+                  {
+                    "key": "base64",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "2c73e989-7302-4a77-85af-551c4ebb0a11",
+                          "path": [
+                            "result"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "fileId",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "filename",
+                    "source": {
+                      "dataType": "STRING",
+                      "type": "TOKENIZED",
+                      "parts": [
+                        {
+                          "dataType": "STRING",
+                          "type": "VARIABLE",
+                          "stepId": "f6fa6f70-01a2-451c-bc2a-85dd932521c0",
+                          "path": [
+                            "instance",
+                            "name"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "key": "source",
+                    "source": {
+                      "type": "VALUE",
+                      "value": "googledrive",
+                      "dataType": "STRING"
+                    }
+                  }
+                ]
+              },
+              "next": null,
+              "_migrations": {
+                "name": "requestStep2"
+              },
+              "description": "Send base64 to backend"
+            }
+          ],
+          "isDraft": false
+        }
+      },
+      "config": {
+        "id": "2eece4e3-0294-4308-8a37-2ad417fbd27f",
+        "values": {
+          "paragonLink": false,
+          "description": "Save files to Google Drive",
+          "overview": "Connect your Google account and sync files from your Google Drive. \n        \nOur Google Drive integration enables you to:\n       \n• Save files to your Google Drive\n• Sync files from your Google Drive",
+          "workflowMeta": {
+            "e9a7bbd5-b0a8-4ea3-9ba0-d56e62805a97": {
+              "id": "e9a7bbd5-b0a8-4ea3-9ba0-d56e62805a97",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Add a user-facing description of this workflow",
+              "order": 2
+            },
+            "e0d3f3c4-dc2b-4631-8496-2fb006c4d626": {
+              "id": "e0d3f3c4-dc2b-4631-8496-2fb006c4d626",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Add a user-facing description of this workflow",
+              "order": 1
+            },
+            "208e8df9-c2a1-4f56-9497-5d435e1c5e3f": {
+              "id": "208e8df9-c2a1-4f56-9497-5d435e1c5e3f",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": "Add a user-facing description of this workflow",
+              "order": 0
+            }
+          },
+          "sharedMeta": {
+            "inputs": [
+              {
+                "id": "1b5bdbd8-5241-4e15-a953-4e34b27077cf",
+                "title": "Folder to share",
+                "tooltip": "",
+                "required": false,
+                "type": "DYNAMIC_ENUM",
+                "sourceType": "folders"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "projectId": "e8969b09-7602-4258-a5e6-d396f049b636",
+  "persona": {
+    "meta": {}
+  },
+  "buildHash": "YaYriUomvLea978Elk0Wra2gOog="
+}

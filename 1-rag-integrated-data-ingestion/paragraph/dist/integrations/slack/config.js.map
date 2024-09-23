@@ -1,0 +1,1 @@
+{"version":3,"file":"config.js","sourceRoot":"","sources":["../../../src/integrations/slack/config.ts"],"names":[],"mappings":";;;AAEA,8HAA6G;AAC7G,sHAAqG;AAKrG,MAAM,MAAM,GAAuB;IACjC,WAAW,EAAE,6BAA6B;IAC1C,YAAY,EAAE;;;;;;;+DAO+C;IAC7D,aAAa,EAAE,IAAI;IACnB,oBAAoB,EAAE;QACpB,2CAAiC;QACjC,uCAA6B;KAC9B;CACF,CAAC;AAEF,kBAAe,MAAM,CAAC"}
