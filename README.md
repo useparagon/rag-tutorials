@@ -3,6 +3,7 @@
 This tutorial series will go through how to build a RAG enabled chatbot with multiple third party integrations.
 Our chatbot Parato, is built with industry standard products:
 - LlamaIndex - LLM Application framework
+- OpenAI - LLM
 - Pinecone - Vector Database
 - Okta FGA - Authorization Model
 - Third Party Data Platforms
