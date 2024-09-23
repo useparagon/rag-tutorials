@@ -56,6 +56,7 @@ export default class extends Workflow<
       url: `https://api.dropboxapi.com/2/files/list_folder`,
       params: { ['']: '' },
       headers: {},
+      // @ts-ignore
       body: { path: `${triggerStep.output.request.params.folder}` },
       bodyType: 'json',
     });
@@ -148,6 +149,7 @@ export default class extends Workflow<
             objectType: objectType,
           },
           subject: {
+            // @ts-ignore
             subjectId: parameters.subject.folder,
           },
         };

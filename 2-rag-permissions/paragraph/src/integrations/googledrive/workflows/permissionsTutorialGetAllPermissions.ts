@@ -51,6 +51,7 @@ export default class extends Workflow<
     const getAllFilesStep = integration.actions.googleDriveListFiles(
       {
         includeFolders: true,
+        // @ts-ignore
         parentId: `${triggerStep.output.request.params.folder}`,
         pageSize: '',
       },
@@ -329,6 +330,7 @@ export default class extends Workflow<
         const objectName = parameters.object.name;
         const objectId = parameters.object.id;
         const objectType = parameters.object.mimeType;
+        // @ts-ignore
         const subjectId = parameters.subject.folder;
         return {
           subject: {
