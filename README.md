@@ -16,7 +16,9 @@ Our chatbot Parato, is built with industry standard products:
 This tutorial goes through how to start building a chatbot powered by LlamaIndex with data integrations for **Google Drive,
 Slack, and Notion**. Parato can ingest data from these 3 data platforms, respond with context from data ingested, and stay 
 up-to-date with new messages, files, and data coming from these integrations. In the codebase, you'll not only find the 
-application code for Parato, but also Paragraph templates for building your Paragon workflows
+application code for Parato, but also Paragraph templates for building your Paragon workflows.
+
+Link to tutorial: [Building an AI Knowledge Chatbot with Multiple Data Integrations](https://www.useparagon.com/learn/ai-knowledge-chatbot-chapter-1/)
 
 ## Part 2: Permission System for RAG Applications
 This second tutorial extends Parato's functionality, layering a permissions system to Parato's ability to respond with 
@@ -25,3 +27,4 @@ an internal model of permissions from both of these integrations, only respond w
 permissions to, and stay up-to-date on permissions in real time. Explore the codebase and paragraph templates to see how 
 Parato takes advantage of Okta FGA and Paragon model and update permissions across integrations.
 
+Link to tutorial: [Building a Permissions System For Your RAG Application](https://www.useparagon.com/learn/ai-knowledge-chatbot-with-permissions-chapter-2/)
