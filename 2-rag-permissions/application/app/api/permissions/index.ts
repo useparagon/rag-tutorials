@@ -146,10 +146,10 @@ function getUsersOfType(data: any, type: string): Map<string, any>{
     const resMap = new Map();
 
     data.forEach((elem: any) => {
-        let subject = elem.permission;
+        let subject = elem.subject;
 
-        if(subject.permissionType === type){
-            resMap.set(subject.permissionSubject, elem);
+        if(subject.relationshipType === type){
+            resMap.set(subject.subjectId, elem);
         }
     });
     return resMap;
