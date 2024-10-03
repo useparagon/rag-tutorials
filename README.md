@@ -20,7 +20,7 @@ application code for Parato, but also Paragraph templates for building your Para
 
 Link to tutorial: [Building an AI Knowledge Chatbot with Multiple Data Integrations](https://www.useparagon.com/learn/ai-knowledge-chatbot-chapter-1/)
 
-## Part 2: Permission System for RAG Applications
+## Part 2.0: Permission System for RAG Applications
 This second tutorial extends Parato's functionality, layering a permissions system to Parato's ability to respond with 
 context from third party integrations. In this part, Parato will ingest permissions from Google Drive and Dropbox, create 
 an internal model of permissions from both of these integrations, only respond with context from files that the user has 
@@ -28,3 +28,15 @@ permissions to, and stay up-to-date on permissions in real time. Explore the cod
 Parato takes advantage of Okta FGA and Paragon model and update permissions across integrations.
 
 Link to tutorial: [Building a Permissions System For Your RAG Application](https://www.useparagon.com/learn/ai-knowledge-chatbot-with-permissions-chapter-2/)
+
+## Part 2.5: Scaling Permissions with Third Party Integrations
+This tutorial is an extension to Part 2.0.
+In this tutorial, we are implementing a caching pattern inspired by the "write-through" cache
+invalidation method to keep response time low and expanding our Okta FGA graph schema to accomodate different permissions structures
+that new integrations introduce. The caching implementation speeds up permission checking on a
+per-query basis, where we are only using our FGA graph to check permissions rather than going to the third party API. This
+reduces the number of network hops we need to take per chat interaction. The extension in graph schema doesn't change performance,
+but it does allow Parato to take on different integration types as we demonstrate data ingestion and permissions in our RAG
+application using both Google Drive and Salesforce data - two integrations that have very different ways they structure permissions.
+
+Link to tutorial: [Building Permissions that Scale with Third Party Integrations](https://www.useparagon.com/learn/building-permissions-and-access-control-that-scale-with-third-party-integrations/)
