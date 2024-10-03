@@ -7,7 +7,7 @@ Our chatbot Parato, is built with industry standard products:
 - Pinecone - Vector Database
 - Okta FGA - Authorization Model
 - Third Party Data Platforms
-  - Google Drive, Slack, Notion, Dropbox
+  - Google Drive, Slack, Notion, Dropbox, Salesforce
 - Paragon - Integrations
   - Includes workflow & webhook engine
   - Integrated UI for your application
