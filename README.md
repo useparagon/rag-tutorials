@@ -48,3 +48,15 @@ third party data, with higher
 performance and flexibility that scale as the **number** of integrations increase and the **type** of integrations increase.
 
 Link to tutorial: [Building Permissions that Scale with Third Party Integrations](https://www.useparagon.com/learn/building-permissions-and-access-control-that-scale-with-third-party-integrations/)
+
+## Part 3.0: Agentic Actions in Third Party Integrations
+In part 3 of our RAG tutorial series, we'll be focusing on bringing a RAG enabled chatbot to becoming a RAG enabled AI assistant.
+An AI assistant will be able to not only read data from external data sources for more relevant responses, but also write
+data to third party platforms natively in the chat interface.
+
+This tutorial walk through how to use Function Tools to define typescript functions your AI Agent can use to map information
+from prompt to your desired schema and send POST requests to another service. Another key aspect of this tutorial is implementing 
+a Human-in-the-Loop (HITL) system where every "write" action has a draft step that previews an action, and then a "create"
+step that actually sends off the data to the third party system.
+
+Link to tutorial: [Coming Soon](placeholder)
