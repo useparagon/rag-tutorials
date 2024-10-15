@@ -59,4 +59,24 @@ from prompt to your desired schema and send POST requests to another service. An
 a Human-in-the-Loop (HITL) system where every "write" action has a draft step that previews an action, and then a "create"
 step that actually sends off the data to the third party system.
 
-Link to tutorial: [Coming Soon](placeholder)
+Link to tutorial: [Implementing Agentic Actions in Third Party Integrations](https://www.useparagon.com/learn/implementing-agentic-actions-with-third-party-integrations/)
+
+## Running Locally
+As mentioned in the introduction, we are using many industry standard technologies to power Parato. To run locally, you will
+need to perform the following steps to provision and connect Parato's necessary components:
+1) Create a [Pinecone](https://www.pinecone.io/) Vector database (if you don't currently have one or would like to 
+connect a fresh database)
+2) For the permissions tutorials, create an [Okta FGA](https://docs.fga.dev/) graph (dev account is free)
+3) Login or signup for [Paragon](https://www.useparagon.com/) ([free trial](https://dashboard.useparagon.com/signup) available if not currently a user)
+   1) Locate your Paragon Project ID and signing key ([docs](https://docs.useparagon.com/getting-started/installing-the-connect-sdk#setup))
+4) To setup an authentication service, you will need a service that takes in username, email, and password credentials;
+the service will return a JWT signed with your Paragon Signing key from step 3 ([Instructions on JWT specifications](https://docs.useparagon.com/getting-started/installing-the-connect-sdk#setup))
+   1) Feel free to reach out to our team to schedule a demo and we can provide a built out authentication service we use for 
+   [demos](https://www.useparagon.com/book-demo)
+5) For the agentic actions tutorials, you will also need to have Paragon endpoints that trigger your Slack and Salesforce
+"create" workflows
+6) Using your credentials from Pinecone, Okta FGA, OpenAI, and authentication service, fill out the `.env` file found in 
+the `application` directory of each tutorial
+7) Last step: use a proxy like [ngrok](https://ngrok.com/) to provide a tunnel for your local application to be accessible
+via the internet
+   1) Use your reverse proxy URL to forward data from your Paragon workflows to your local application's API endpoints
