@@ -1,0 +1,13 @@
+.idea
+.DS_Store
+
+/2.0-rag-permissions/application/node_modules
+/2.0-rag-permissions/application/output
+/2.0-rag-permissions/application/next-env.d.ts
+/2.0-rag-permissions/paragraph/node_modules
+
+/1.0-rag-integrated-data-ingestion/paragraph/.para
+/1.0-rag-integrated-data-ingestion/paragraph/node_modules
+/1.0-rag-integrated-data-ingestion/application/node_modules
+/1.0-rag-integrated-data-ingestion/application/output
+/1.0-rag-integrated-data-ingestion/application/next-env.d.ts

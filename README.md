@@ -4,13 +4,15 @@ This tutorial series will go through how to build a RAG enabled chatbot with mul
 Our chatbot Parato, is built with industry standard products:
 - LlamaIndex - LLM Application framework
 - OpenAI - LLM
-- Pinecone - Vector Database
+- Pinecone (tutorials 1-3) - Vector Database
+- AstraDB (tutorial 3.5) - Vector Database
 - Okta FGA - Authorization Model
 - Third Party Data Platforms
   - Google Drive, Slack, Notion, Dropbox, Salesforce
 - Paragon - Integrations
   - Includes workflow & webhook engine
   - Integrated UI for your application
+  - ActionKit: Paragon's agent-focused API
 
 ## Part 1: RAG Data Ingestion with Multiple Third Party Integrations
 This tutorial goes through how to start building a chatbot powered by LlamaIndex with data integrations for **Google Drive,
@@ -61,11 +63,24 @@ step that actually sends off the data to the third party system.
 
 Link to tutorial: [Implementing Agentic Actions in Third Party Integrations](https://www.useparagon.com/learn/implementing-agentic-actions-with-third-party-integrations/)
 
+## Part 3.5: Scaling Agentic Actions
+This extension of part 3 of our tutorial series focuses on scaling the number of agentic actions across different 3rd-party integrations. 
+Using ActionKit - Paragon's first-class solution for AI agents - we showcased how Parato can dynamically create function tools 
+using the metadata returned from the GET Actions API, and how 3rd-party actions can be easily called with the POST Actions API. 
+Giving these tools to your agent is just the beginning, as you can add your use-case specific context to system prompts, additional 
+tools, and descriptions.
+
+Dive into our codebase to see how just two API calls can give your agent access to hundreds of actions across dozens of supported integrations 
+(more to come).
+
+Link to tutorial: [Scaling Agentic Actions](https://example.com)
+
 ## Running Locally
 As mentioned in the introduction, we are using many industry standard technologies to power Parato. To run locally, you will
 need to perform the following steps to provision and connect Parato's necessary components:
 1) Create a [Pinecone](https://www.pinecone.io/) Vector database (if you don't currently have one or would like to 
 connect a fresh database)
+   1) From tutorial 3.5 onward we switched to [astraDB](https://www.datastax.com/products/datastax-astra)
 2) For modeling permissions (tutorial 2 onward), create an [Okta FGA](https://docs.fga.dev/) graph (dev account is free)
 3) Login or signup for [Paragon](https://www.useparagon.com/) ([free trial](https://dashboard.useparagon.com/signup) available if not currently a user)
    1) Locate your Paragon Project ID and signing key ([docs](https://docs.useparagon.com/getting-started/installing-the-connect-sdk#setup))
@@ -75,6 +90,7 @@ the service will return a JWT signed with your Paragon Signing key from step 3 (
    [demos](https://www.useparagon.com/book-demo)
 5) For the agentic actions tutorials (tutorial 3), you will also need to have Paragon endpoints that trigger your Slack and Salesforce
 "create" workflows
+   1) For tutorial 3.5 with ActionKit, you will need to have Paragon's ActionKit product
 6) Using your credentials from Pinecone, Okta FGA, OpenAI, and authentication service, fill out the `.env` file found in 
 the `application` directory of each tutorial
 7) Last step: use a proxy like [ngrok](https://ngrok.com/) to provide a tunnel for your local application to be accessible
